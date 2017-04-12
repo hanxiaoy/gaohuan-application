@@ -14,13 +14,9 @@
         </filter>
     </appender>
 
-    <logger name="org.springframework">
-        <level value="ERROR"/>
-    </logger>
-
     <!-- 根logger的设置-->
     <root>
-        <level value="TRACE"/>
+        <level value="DEBUG"/>
         <appender-ref ref="console"/>
     </root>
 
