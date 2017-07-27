@@ -1,5 +1,6 @@
 package com.gaohuan.spring;
 
+import com.gaohuan.spring.service.DemoService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -10,7 +11,7 @@ public class SpringMain {
 
     public static void main(String[] args) {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:application-context.xml");
-        String jobExpression = applicationContext.getBean(ValueComponent.class).getJobExpression();
-        System.out.println(jobExpression);
+        DemoService demoService = applicationContext.getBean(DemoService.class);
+        demoService.print1("t1", "t2");
     }
 }
