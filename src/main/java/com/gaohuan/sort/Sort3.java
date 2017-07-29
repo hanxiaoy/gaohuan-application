@@ -1,7 +1,11 @@
 package com.gaohuan.sort;
 
 /**
+ * 冒泡排序
+ * <p>
  * 对相邻的元素进行两两比较，顺序相反则进行交换，这样，每一趟会将最小或最大的元素“浮”到顶端，最终达到完全有序
+ * <p>
+ * 效率 O（n²）,适用于排序小列表。
  */
 public class Sort3 {
     public static void main(String[] args) {

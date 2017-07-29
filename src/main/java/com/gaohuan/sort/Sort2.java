@@ -4,6 +4,9 @@ package com.gaohuan.sort;
  * 插入排序
  * <p>
  * 每步将一个待排序的记录按其关键字的大小插到前面已经排序的序列中的适当位置，直到全部记录插入完毕为止。
+ * <p>
+ * 最佳效率O（n）；最糟效率O（n²）与冒泡、选择相同，适用于排序小列表
+ * 若列表基本有序，则插入排序比冒泡、选择更有效率。
  */
 public class Sort2 {
     public static void main(String[] args) {
