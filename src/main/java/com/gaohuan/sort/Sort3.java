@@ -19,14 +19,18 @@ public class Sort3 {
      */
     private static void sort(int[] array) {
         int size = array.length;
-        for (int i = size - 1; i > 0; i--) {
+        boolean breakLoop = false;//优化：如果已经有序,就不在继续循环
+        for (int i = size - 1; i > 0 && !breakLoop; i--) {
+            breakLoop = true;
             for (int j = 0; j < i; j++) {
                 if (array[j] > array[j + 1]) {
                     int tmp = array[j];
                     array[j] = array[j + 1];
                     array[j + 1] = tmp;
+                    breakLoop = false;
                 }
             }
+            PrintUtils.printArray(array);
         }
 
     }
