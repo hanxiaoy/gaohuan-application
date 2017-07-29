@@ -24,15 +24,17 @@ public class Sort2 {
      */
     public static void sort(int[] array, int size) {
         for (int i = 1; i < size; i++) {
-            int k = array[i];
-            int j = i - 1;
+            if (array[i] < array[i - 1]) {//小于才需要排序
+                int k = array[i];
+                int j = i - 1;
             /*
                 从后向前比较，大于待排序数，后移一位，直到找到待插入位置,并设置插入值
              */
-            for (; j >= 0 && array[j] > k; j--) {
-                array[j + 1] = array[j];
+                for (; j >= 0 && array[j] > k; j--) {
+                    array[j + 1] = array[j];
+                }
+                array[j + 1] = k;
             }
-            array[j + 1] = k;
         }
     }
 
