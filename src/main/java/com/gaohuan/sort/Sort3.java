@@ -13,7 +13,7 @@ public class Sort3 {
         //排序
         sort(array);
         //打印
-        PrintUtils.printArray(array);
+        Utils.printArray(array);
     }
 
     /**
@@ -34,7 +34,7 @@ public class Sort3 {
                     breakLoop = false;
                 }
             }
-            PrintUtils.printArray(array);
+            Utils.printArray(array);
         }
 
     }

@@ -14,7 +14,7 @@ public class Sort4 {
         //排序
         sort(array);
         //打印
-        PrintUtils.printArray(array);
+        Utils.printArray(array);
     }
 
     /**

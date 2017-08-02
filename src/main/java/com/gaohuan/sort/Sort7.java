@@ -20,11 +20,12 @@ package com.gaohuan.sort;
 
 public class Sort7 {
     public static void main(String[] args) {
-        int[] array = new int[]{1, 5, 3, 2, 8, 9, 6};
+//        int[] array = new int[]{1, 5, 3, 2, 8, 9, 6};
+        int[] array = Utils.randomArray(40);
         //排序
         sort(array);
         //打印
-        PrintUtils.printArray(array);
+        Utils.printArray(array);
     }
 
     /**

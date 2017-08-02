@@ -17,7 +17,7 @@ public class Sort6 {
         //排序
         sort(array, 0, array.length - 1);
         //打印
-        PrintUtils.printArray(array);
+        Utils.printArray(array);
     }
 
     /**
