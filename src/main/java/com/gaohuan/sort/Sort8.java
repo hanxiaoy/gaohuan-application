@@ -6,8 +6,7 @@ package com.gaohuan.sort;
 
 public class Sort8 {
     public static void main(String[] args) {
-        int[] array = new int[]{2,12};
-//        int[] array = Utils.randomArray(40);
+        int[] array = Utils.randomArray(40);
         //排序
         array = sort(array, 0, maxLength(array));
         //打印
