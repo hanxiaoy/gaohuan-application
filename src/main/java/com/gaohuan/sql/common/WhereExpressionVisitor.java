@@ -8,6 +8,7 @@ import net.sf.jsqlparser.expression.JdbcParameter;
 import net.sf.jsqlparser.expression.operators.relational.*;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -64,7 +65,8 @@ public class WhereExpressionVisitor extends ExpressionVisitorAdapter {
             Column column = (Column) binaryExpression.getLeftExpression();
             JdbcParameter jdbcParameter = (JdbcParameter) binaryExpression.getRightExpression();
             String tableName = Commons.tableName(tablesSet, column.getTable().getName());
-            if (Constants.TABLE_TO_COLUMN.get(tableName.toUpperCase()).contains(column.getColumnName())) {
+            List<String> columnList = Constants.TABLE_TO_COLUMN.get(tableName.toUpperCase());
+            if (CollectionUtils.isNotEmpty(columnList) && columnList.contains(column.getColumnName())) {
                 paramInfoList.add(new ParamInfo(tableName, jdbcParameter.getIndex(), column.getColumnName()));
             }
         }

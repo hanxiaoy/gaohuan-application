@@ -2,6 +2,7 @@ package com.gaohuan.sql.common;
 
 import com.alibaba.druid.proxy.jdbc.ConnectionProxy;
 import com.gaohuan.utils.Constants;
+import net.sf.jsqlparser.expression.Alias;
 import net.sf.jsqlparser.expression.Function;
 import net.sf.jsqlparser.expression.StringValue;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
@@ -52,9 +53,13 @@ public class CustomSelectItemVisitor extends SelectItemVisitorAdapter {
                     mark = true;
                     for (String columnName : columnList) {
                         if (decryptColumns.contains(columnName)) {
-                            itemList.add(new SelectExpressionItem(buildExpression(table, columnName)));
+                            SelectExpressionItem selectExpressionItem = new SelectExpressionItem(buildExpression(table, columnName));
+                            selectExpressionItem.setAlias(new Alias(columnName));
+                            itemList.add(selectExpressionItem);
                         } else {
-                            itemList.add(new SelectExpressionItem(new Column(new Table(table.getAlias().getName()), columnName)));
+                            SelectExpressionItem selectExpressionItem = new SelectExpressionItem(new Column(new Table(table.getAlias().getName()), columnName));
+                            selectExpressionItem.setAlias(new Alias(columnName));
+                            itemList.add(selectExpressionItem);
                         }
                     }
                 }
