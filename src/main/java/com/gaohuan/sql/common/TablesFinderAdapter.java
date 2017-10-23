@@ -148,15 +148,7 @@ public class TablesFinderAdapter implements StatementVisitor, SelectVisitor, Fro
 
     @Override
     public void visit(PlainSelect plainSelect) {
-        if (plainSelect.getFromItem() != null) {
-            plainSelect.getFromItem().accept(this);
-        }
 
-        if (plainSelect.getJoins() != null) {
-            for (Join join : plainSelect.getJoins()) {
-                join.getRightItem().accept(this);
-            }
-        }
     }
 
     @Override
