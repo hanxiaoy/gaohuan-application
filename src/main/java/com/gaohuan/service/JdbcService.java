@@ -1,5 +1,6 @@
 package com.gaohuan.service;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,8 +26,10 @@ public class JdbcService {
             @Override
             public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
                 PreparedStatement preparedStatement = connection.prepareStatement(sql);
-                for (int i = 0; i < params.size(); i++) {
-                    preparedStatement.setObject(i+1, params.get(i));
+                if(CollectionUtils.isNotEmpty(params)){
+                    for (int i = 0; i < params.size(); i++) {
+                        preparedStatement.setObject(i+1, params.get(i));
+                    }
                 }
                 return preparedStatement;
             }

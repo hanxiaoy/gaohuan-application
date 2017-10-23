@@ -4,6 +4,7 @@ import com.alibaba.druid.proxy.jdbc.ConnectionProxy;
 import com.alibaba.druid.proxy.jdbc.PreparedStatementProxy;
 import com.alibaba.druid.proxy.jdbc.StatementProxy;
 import com.gaohuan.sql.common.CustomStatementVisitor;
+import com.gaohuan.sql.common.SelectStatementVisitor;
 import com.gaohuan.sql.common.TablesFinder;
 import com.gaohuan.utils.Constants;
 import com.gaohuan.utils.MysqlAesUtils;
@@ -39,7 +40,7 @@ public class CustomStatementHandler {
     }
 
     public PreparedStatementProxy processPrepareStatement(PreparedStatementProxy preparedStatement) throws SQLException {
-        ProcessedInfo processedInfo = internalProcess(preparedStatement.getSql(), preparedStatement.getConnectionProxy());
+        ProcessedInfo processedInfo = internalProcess(preparedStatement.getSql(), preparedStatement.getConnectionProxy(), Type.INFO);
         List<ParamInfo> paramInfoList = processedInfo.getParamInfoList();
         if (CollectionUtils.isNotEmpty(paramInfoList)) {
             for (ParamInfo paramInfo : paramInfoList) {
@@ -54,11 +55,11 @@ public class CustomStatementHandler {
     }
 
     public String processSql(StatementProxy statement, String sql) throws SQLException {
-        return internalProcess(sql, statement.getConnectionProxy()).getSql();
+        return internalProcess(sql, statement.getConnectionProxy(), Type.SQL).getSql();
     }
 
     public String processSql(ConnectionProxy connectionProxy, String sql) {
-        return internalProcess(sql, connectionProxy).getSql();
+        return internalProcess(sql, connectionProxy, Type.SQL).getSql();
     }
 
 
@@ -68,18 +69,27 @@ public class CustomStatementHandler {
      * @param sql
      * @return
      */
-    private ProcessedInfo internalProcess(String sql, ConnectionProxy connection) {
+    private ProcessedInfo internalProcess(String sql, ConnectionProxy connection, Type type) {
         try {
             CCJSqlParserManager sqlParserManager = new CCJSqlParserManager();
             Statement statement = sqlParserManager.parse(new StringReader(sql));
             Set<Table> tableSet = TablesFinder.create().getTables(statement);
             List<ParamInfo> paramInfoList = Lists.newArrayList();
-            statement.accept(new CustomStatementVisitor(tableSet, paramInfoList, connection));
+            if (type == Type.INFO) {
+                statement.accept(new CustomStatementVisitor(tableSet, paramInfoList, connection));
+            } else if (type == Type.SQL) {
+                statement.accept(new SelectStatementVisitor(tableSet, paramInfoList, connection));
+            }
             return new ProcessedInfo(statement.toString(), paramInfoList);
         } catch (JSQLParserException e) {
             logger.error("sql解析失败", e);
         }
         return new ProcessedInfo(sql, Lists.newArrayList());
+    }
+
+    private enum Type {
+        SQL,
+        INFO
     }
 
 }

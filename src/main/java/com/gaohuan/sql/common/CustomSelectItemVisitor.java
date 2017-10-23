@@ -23,7 +23,7 @@ import java.util.Set;
  * <p>
  * Created by gaohuan on 2017/10/23.
  */
-public class SelectExpressionVisitor extends SelectItemVisitorAdapter {
+public class CustomSelectItemVisitor extends SelectItemVisitorAdapter {
 
     private Set<Table> tablesSet;
 
@@ -32,7 +32,7 @@ public class SelectExpressionVisitor extends SelectItemVisitorAdapter {
     private ConnectionProxy connection;
 
 
-    public SelectExpressionVisitor(Set<Table> tablesSet, List<SelectItem> itemList, ConnectionProxy connection) {
+    public CustomSelectItemVisitor(Set<Table> tablesSet, List<SelectItem> itemList, ConnectionProxy connection) {
         this.tablesSet = tablesSet;
         this.itemList = itemList;
         this.connection = connection;
@@ -45,7 +45,7 @@ public class SelectExpressionVisitor extends SelectItemVisitorAdapter {
         Iterator<Table> iterator = tablesSet.iterator();
         while (iterator.hasNext()) {
             Table table = iterator.next();
-            List<String> decryptColumns = Constants.TABLE_TO_COLUMN.get(table.getName());
+            List<String> decryptColumns = Constants.TABLE_TO_COLUMN.get(table.getName().toUpperCase());
             if (CollectionUtils.isNotEmpty(decryptColumns)) {
                 List<String> columnList = Commons.columns(connection, table.getName());
                 if (CollectionUtils.isNotEmpty(columnList)) {
@@ -71,7 +71,7 @@ public class SelectExpressionVisitor extends SelectItemVisitorAdapter {
         if (item.getExpression() instanceof Column) {
             Column column = (Column) item.getExpression();
             String tableName = Commons.tableName(tablesSet, column.getTable().getName());
-            List<String> decryptColumns = Constants.TABLE_TO_COLUMN.get(tableName);
+            List<String> decryptColumns = Constants.TABLE_TO_COLUMN.get(tableName.toUpperCase());
             if (CollectionUtils.isNotEmpty(decryptColumns) && decryptColumns.contains(column.getColumnName())) {
                 SelectExpressionItem newItem = new SelectExpressionItem(buildExpression(Commons.table(tablesSet, column.getTable().getName()), column.getColumnName()));
                 newItem.setAlias(item.getAlias());
