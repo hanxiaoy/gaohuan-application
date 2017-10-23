@@ -12,11 +12,11 @@ import java.sql.SQLException;
 
 /**
  * 对指定字段进行数据加密解密处理
- * <p>CipherDataFiler
+ * <p>CipherDataFilter
  * <p>
  * Created by gaohuan on 2017/10/19.
  */
-public class CipherDataFiler extends FilterEventAdapter {
+public class CipherDataFilter extends FilterEventAdapter {
 
     @Override
     public PreparedStatementProxy connection_prepareStatement(FilterChain chain, ConnectionProxy connection, String sql) throws SQLException {
