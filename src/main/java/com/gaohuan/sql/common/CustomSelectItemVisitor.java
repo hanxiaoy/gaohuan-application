@@ -57,7 +57,11 @@ public class CustomSelectItemVisitor extends SelectItemVisitorAdapter {
                             selectExpressionItem.setAlias(new Alias(columnName));
                             itemList.add(selectExpressionItem);
                         } else {
-                            SelectExpressionItem selectExpressionItem = new SelectExpressionItem(new Column(new Table(table.getAlias().getName()), columnName));
+                            Table newTable = null;
+                            if (table.getAlias() != null) {
+                                new Table(table.getAlias().getName());
+                            }
+                            SelectExpressionItem selectExpressionItem = new SelectExpressionItem(new Column(newTable, columnName));
                             selectExpressionItem.setAlias(new Alias(columnName));
                             itemList.add(selectExpressionItem);
                         }
@@ -99,7 +103,11 @@ public class CustomSelectItemVisitor extends SelectItemVisitorAdapter {
     private Function buildExpression(Table table, String columnName) {
         Function fromBase64 = new Function();
         fromBase64.setName("from_base64");
-        fromBase64.setParameters(new ExpressionList(Arrays.asList(new Column(new Table(table.getAlias().getName()), columnName))));
+        Table newTable = null;
+        if (table.getAlias() != null) {
+            new Table(table.getAlias().getName());
+        }
+        fromBase64.setParameters(new ExpressionList(Arrays.asList(new Column(newTable, columnName))));
         Function decryptFunction = new Function();
         decryptFunction.setName("AES_DECRYPT");
         decryptFunction.setParameters(new ExpressionList(Arrays.asList(fromBase64, new StringValue(Constants.MYSQL_SECRET_KEY))));
