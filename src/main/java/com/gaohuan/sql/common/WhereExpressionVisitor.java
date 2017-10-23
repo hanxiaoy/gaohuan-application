@@ -64,7 +64,7 @@ public class WhereExpressionVisitor extends ExpressionVisitorAdapter {
                     && binaryExpression.getRightExpression() instanceof JdbcParameter) {
                 Column column = (Column) binaryExpression.getLeftExpression();
                 JdbcParameter jdbcParameter = (JdbcParameter) binaryExpression.getRightExpression();
-                String tableName = TableName.get(tablesSet, column.getTable().getName());
+                String tableName = Commons.tableName(tablesSet, column.getTable().getName());
                 if (Constants.TABLE_TO_COLUMN.get(tableName).contains(column.getColumnName())) {
                     paramInfoList.add(new ParamInfo(tableName, jdbcParameter.getIndex(), column.getColumnName()));
                 }
@@ -74,8 +74,8 @@ public class WhereExpressionVisitor extends ExpressionVisitorAdapter {
                 && binaryExpression.getRightExpression() instanceof StringValue) {
             Column column = (Column) binaryExpression.getLeftExpression();
             StringValue stringValue = (StringValue) binaryExpression.getRightExpression();
-            String tableName = TableName.get(tablesSet, column.getTable().getName());
-            if (Constants.TABLE_TO_COLUMN.get(tableName).contains(column.getColumnName())) {
+            String tableName = Commons.tableName(tablesSet, column.getTable().getName());
+            if (Constants.TABLE_TO_COLUMN.tableName(tableName).contains(column.getColumnName())) {
                 stringValue.setValue(MysqlAesUtils.encrypt(stringValue.getValue(), Constants.MYSQL_SECRET_KEY));
             }
         }

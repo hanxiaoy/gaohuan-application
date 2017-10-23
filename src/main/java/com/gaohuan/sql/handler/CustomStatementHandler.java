@@ -39,7 +39,7 @@ public class CustomStatementHandler {
     }
 
     public PreparedStatementProxy processPrepareStatement(PreparedStatementProxy preparedStatement) throws SQLException {
-        ProcessedInfo processedInfo = internalProcess(preparedStatement.getSql());
+        ProcessedInfo processedInfo = internalProcess(preparedStatement.getSql(), preparedStatement.getConnectionProxy());
         List<ParamInfo> paramInfoList = processedInfo.getParamInfoList();
         if (CollectionUtils.isNotEmpty(paramInfoList)) {
             for (ParamInfo paramInfo : paramInfoList) {
@@ -54,13 +54,11 @@ public class CustomStatementHandler {
     }
 
     public String processSql(StatementProxy statement, String sql) throws SQLException {
-        //todo internalProcess
-        return sql;
+        return internalProcess(sql, statement.getConnectionProxy()).getSql();
     }
 
     public String processSql(ConnectionProxy connectionProxy, String sql) {
-        //todo internalProcess
-        return sql;
+        return internalProcess(sql, connectionProxy).getSql();
     }
 
 
@@ -70,13 +68,13 @@ public class CustomStatementHandler {
      * @param sql
      * @return
      */
-    private ProcessedInfo internalProcess(String sql) {
+    private ProcessedInfo internalProcess(String sql, ConnectionProxy connection) {
         try {
             CCJSqlParserManager sqlParserManager = new CCJSqlParserManager();
             Statement statement = sqlParserManager.parse(new StringReader(sql));
             Set<Table> tableSet = TablesFinder.create().getTables(statement);
             List<ParamInfo> paramInfoList = Lists.newArrayList();
-            statement.accept(new CustomStatementVisitor(tableSet, paramInfoList));
+            statement.accept(new CustomStatementVisitor(tableSet, paramInfoList, connection));
             return new ProcessedInfo(statement.toString(), paramInfoList);
         } catch (JSQLParserException e) {
             logger.error("sql解析失败", e);

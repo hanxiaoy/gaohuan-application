@@ -1,5 +1,6 @@
 package com.gaohuan.sql.common;
 
+import com.alibaba.druid.proxy.jdbc.ConnectionProxy;
 import com.gaohuan.vo.ParamInfo;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.StatementVisitorAdapter;
@@ -11,6 +12,7 @@ import net.sf.jsqlparser.statement.select.SelectItem;
 import net.sf.jsqlparser.statement.select.SelectVisitorAdapter;
 import net.sf.jsqlparser.statement.update.Update;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -23,9 +25,12 @@ public class CustomStatementVisitor extends StatementVisitorAdapter {
 
     private List<ParamInfo> paramInfoList;
 
-    public CustomStatementVisitor(Set<Table> tablesSet, List<ParamInfo> paramInfoList) {
+    private ConnectionProxy connection;
+
+    public CustomStatementVisitor(Set<Table> tablesSet, List<ParamInfo> paramInfoList, ConnectionProxy connection) {
         this.tableSet = tablesSet;
         this.paramInfoList = paramInfoList;
+        this.connection = connection;
     }
 
     @Override
@@ -33,10 +38,14 @@ public class CustomStatementVisitor extends StatementVisitorAdapter {
         select.getSelectBody().accept(new SelectVisitorAdapter() {
             @Override
             public void visit(PlainSelect plainSelect) {
-                plainSelect.getWhere().accept(new WhereExpressionVisitor(tableSet, paramInfoList));
+                List<SelectItem> itemList = new ArrayList<SelectItem>();
                 for (SelectItem selectItem : plainSelect.getSelectItems()) {
-                    selectItem.accept(new SelectExpressionVisitor(tableSet));
+                    selectItem.accept(new SelectExpressionVisitor(tableSet, itemList, connection));
                 }
+                //设置处理后新的itemList
+                plainSelect.setSelectItems(itemList);
+                //处理where条件
+                plainSelect.getWhere().accept(new WhereExpressionVisitor(tableSet, paramInfoList));
             }
         });
     }
