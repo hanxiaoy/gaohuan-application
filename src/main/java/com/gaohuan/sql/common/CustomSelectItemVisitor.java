@@ -59,7 +59,7 @@ public class CustomSelectItemVisitor extends SelectItemVisitorAdapter {
                         } else {
                             Table newTable = null;
                             if (table.getAlias() != null) {
-                                new Table(table.getAlias().getName());
+                                newTable = new Table(table.getAlias().getName());
                             }
                             SelectExpressionItem selectExpressionItem = new SelectExpressionItem(new Column(newTable, columnName));
                             selectExpressionItem.setAlias(new Alias(columnName));
@@ -83,7 +83,11 @@ public class CustomSelectItemVisitor extends SelectItemVisitorAdapter {
             List<String> decryptColumns = Constants.TABLE_TO_COLUMN.get(tableName.toUpperCase());
             if (CollectionUtils.isNotEmpty(decryptColumns) && decryptColumns.contains(column.getColumnName())) {
                 SelectExpressionItem newItem = new SelectExpressionItem(buildExpression(Commons.table(tablesSet, column.getTable().getName()), column.getColumnName()));
-                newItem.setAlias(item.getAlias());
+                if (item.getAlias() != null) {
+                    newItem.setAlias(item.getAlias());
+                } else {
+                    newItem.setAlias(new Alias(column.getColumnName()));
+                }
                 itemList.add(newItem);
                 mark = true;
             }
@@ -105,7 +109,7 @@ public class CustomSelectItemVisitor extends SelectItemVisitorAdapter {
         fromBase64.setName("from_base64");
         Table newTable = null;
         if (table.getAlias() != null) {
-            new Table(table.getAlias().getName());
+            newTable = new Table(table.getAlias().getName());
         }
         fromBase64.setParameters(new ExpressionList(Arrays.asList(new Column(newTable, columnName))));
         Function decryptFunction = new Function();

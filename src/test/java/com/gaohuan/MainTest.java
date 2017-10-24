@@ -33,6 +33,27 @@ public class MainTest {
     }
 
     @Test
+    public void testSelect2() {
+        String sql = "select * from test_1 a where a.phone = '15811056271' and  a.id = ? ";
+        List<Test1> list = jdbcService.doQuery(sql, Collections.singletonList("1"), Test1.class);
+        assertThat(list.get(0).getPhone()).isEqualTo("15811056271");
+    }
+
+    @Test
+    public void testSelect3() {
+        String sql = "select a.id,a.phone,a.user_name from test_1 a where a.phone = '15811056271' and  a.id = ? ";
+        List<Test1> list = jdbcService.doQuery(sql, Collections.singletonList("1"), Test1.class);
+        assertThat(list.get(0).getPhone()).isEqualTo("15811056271");
+    }
+
+    @Test
+    public void testSelect4() {
+        String sql = "select a.id,a.phone,a.user_name from test_1 a ,test_2 b where a.user_name=b.user_name and  b.phone = '15811056271' and  a.id = ? ";
+        List<Test1> list = jdbcService.doQuery(sql, Collections.singletonList("1"), Test1.class);
+        assertThat(list.get(0).getPhone()).isEqualTo("15811056271");
+    }
+
+    @Test
     public void testUpdate1() {
         String sql = "update test_1 set user_name='15811056272' where phone = ? and id =1";
         jdbcService.doUpdate(sql, Collections.singletonList("15811056271"));
