@@ -17,7 +17,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         ApplicationContext context = new ClassPathXmlApplicationContext("classpath:application-context.xml");
         JdbcService jdbcService = context.getBean(JdbcService.class);
-        List<Map<String, Object>> resultList = jdbcService.doExecute("select * from test_1 a where  a.phone=? ", Arrays.asList("15811056271"));
+        List<Map<String, Object>> resultList = jdbcService.doQuery("select * from test_1 a where  a.phone=? ", Arrays.asList("15811056271"));
         if (CollectionUtils.isNotEmpty(resultList)) {
             for (Map<String, Object> result : resultList) {
                 Integer id = (Integer) result.get("id");

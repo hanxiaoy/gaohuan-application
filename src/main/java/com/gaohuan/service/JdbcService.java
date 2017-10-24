@@ -2,6 +2,7 @@ package com.gaohuan.service;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -21,7 +22,23 @@ public class JdbcService {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<Map<String, Object>> doExecute(String sql, List<Object> params) {
+    public void doUpdate(String sql, List<Object> params) {
+        jdbcTemplate.update(new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                if (CollectionUtils.isNotEmpty(params)) {
+                    for (int i = 0; i < params.size(); i++) {
+                        preparedStatement.setObject(i + 1, params.get(i));
+                    }
+                }
+                return preparedStatement;
+            }
+        });
+
+    }
+
+    public List<Map<String, Object>> doQuery(String sql, List<Object> params) {
 
         return jdbcTemplate.query(new PreparedStatementCreator() {
             @Override
@@ -35,6 +52,24 @@ public class JdbcService {
                 return preparedStatement;
             }
         }, new ColumnMapRowMapper());
+
+    }
+
+
+    public <T> List<T> doQuery(String sql, List<Object> params, Class<T> tClass) {
+
+        return jdbcTemplate.query(new PreparedStatementCreator() {
+            @Override
+            public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                if (CollectionUtils.isNotEmpty(params)) {
+                    for (int i = 0; i < params.size(); i++) {
+                        preparedStatement.setObject(i + 1, params.get(i));
+                    }
+                }
+                return preparedStatement;
+            }
+        }, new BeanPropertyRowMapper<T>(tClass));
 
     }
 

@@ -54,6 +54,11 @@ public class CipherDataFilter extends FilterEventAdapter {
     }
 
     @Override
+    public int preparedStatement_executeUpdate(FilterChain chain, PreparedStatementProxy statement) throws SQLException {
+        return super.preparedStatement_executeUpdate(chain, CustomStatementHandler.create().processPrepareStatement(statement));
+    }
+
+    @Override
     public ResultSetProxy preparedStatement_executeQuery(FilterChain chain, PreparedStatementProxy statement) throws SQLException {
         return super.preparedStatement_executeQuery(chain, CustomStatementHandler.create().processPrepareStatement(statement));
     }
