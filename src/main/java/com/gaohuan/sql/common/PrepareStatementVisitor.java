@@ -1,7 +1,17 @@
 package com.gaohuan.sql.common;
 
+import java.util.List;
+import java.util.Set;
+
 import com.alibaba.druid.proxy.jdbc.ConnectionProxy;
+import com.gaohuan.utils.Constants;
+import com.gaohuan.utils.MysqlAesUtils;
 import com.gaohuan.vo.ParamInfo;
+
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.JdbcParameter;
+import net.sf.jsqlparser.expression.StringValue;
+import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.StatementVisitorAdapter;
 import net.sf.jsqlparser.statement.delete.Delete;
@@ -10,9 +20,6 @@ import net.sf.jsqlparser.statement.select.PlainSelect;
 import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectVisitorAdapter;
 import net.sf.jsqlparser.statement.update.Update;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * 预编译参数处理类
@@ -74,7 +81,26 @@ public class PrepareStatementVisitor extends StatementVisitorAdapter {
     @Override
     public void visit(Update update) {
         //todo 处理 set a=? or set a='1'
-        update.getWhere().accept(new WhereExpressionVisitor(tableSet, paramInfoList));
+    	List<Column> colList = update.getColumns();
+    	List<Expression> expList = update.getExpressions();
+    	Column col;
+    	Expression exp;
+    	for(int i = 0; i< colList.size();i++){
+    		col = colList.get(i);
+    		String tableName = Commons.tableName(tableSet, col.getTable().getName());
+    		List<String> columnList = Constants.TABLE_TO_COLUMN.get(tableName.toUpperCase());
+    		if(columnList.contains(col.getColumnName())){
+    			exp = expList.get(i);
+    			if (exp instanceof JdbcParameter) {
+						JdbcParameter jdbc = (JdbcParameter) exp;
+						paramInfoList.add(new ParamInfo(tableName, jdbc.getIndex(), col.getColumnName()));
+					}else if(exp instanceof StringValue){
+						StringValue str = (StringValue) exp;
+						str.setValue(MysqlAesUtils.encrypt(str.getValue(), Constants.MYSQL_SECRET_KEY));
+					}
+    		}
+    	}
+       update.getWhere().accept(new WhereExpressionVisitor(tableSet, paramInfoList));
     }
 
     /**

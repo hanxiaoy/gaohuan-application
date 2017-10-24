@@ -55,7 +55,7 @@ public class MainTest {
 
     @Test
     public void testUpdate1() {
-        String sql = "update test_1 set user_name='15811056272' where phone = ? and id =1";
+        String sql = "update test_2 set phone=?, user_name = '123' where id =2";
         jdbcService.doUpdate(sql, Collections.singletonList("15811056271"));
     }
 }

@@ -3,4 +3,7 @@
 .idea/
 target/
 logs/
+.settings/
+.project
+.classpath
 
