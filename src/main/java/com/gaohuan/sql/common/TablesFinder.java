@@ -12,10 +12,14 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
+ * 表名查找类
+ * <p>
  * Created by gaohuan on 2017/10/23.
  */
 public class TablesFinder extends TablesFinderAdapter {
-
+    /**
+     * 表名
+     */
     private Set<Table> tables;
 
     private TablesFinder() {

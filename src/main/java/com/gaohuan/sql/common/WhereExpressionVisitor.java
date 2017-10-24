@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * where表达式处理类
+ * <p>
  * Created by gaohuan on 2017/10/23.
  */
 public class WhereExpressionVisitor extends ExpressionVisitorAdapter {
@@ -58,6 +60,12 @@ public class WhereExpressionVisitor extends ExpressionVisitorAdapter {
         processExpression(expr);
     }
 
+    /**
+     * 处理表达式
+     * <p> 匹配待加密参数信息
+     *
+     * @param binaryExpression
+     */
     private void processExpression(BinaryExpression binaryExpression) {
 
         if (binaryExpression.getLeftExpression() instanceof Column

@@ -3,8 +3,8 @@ package com.gaohuan.sql.handler;
 import com.alibaba.druid.proxy.jdbc.ConnectionProxy;
 import com.alibaba.druid.proxy.jdbc.PreparedStatementProxy;
 import com.alibaba.druid.proxy.jdbc.StatementProxy;
-import com.gaohuan.sql.common.CustomStatementVisitor;
-import com.gaohuan.sql.common.SelectStatementVisitor;
+import com.gaohuan.sql.common.PrepareStatementVisitor;
+import com.gaohuan.sql.common.RebuildStatementVisitor;
 import com.gaohuan.sql.common.TablesFinder;
 import com.gaohuan.utils.Constants;
 import com.gaohuan.utils.MysqlAesUtils;
@@ -39,8 +39,15 @@ public class CustomStatementHandler {
         return new CustomStatementHandler();
     }
 
+    /**
+     * 处理预编译参数
+     *
+     * @param preparedStatement
+     * @return
+     * @throws SQLException
+     */
     public PreparedStatementProxy processPrepareStatement(PreparedStatementProxy preparedStatement) throws SQLException {
-        ProcessedInfo processedInfo = internalProcess(preparedStatement.getSql(), preparedStatement.getConnectionProxy(), Type.INFO);
+        ProcessedInfo processedInfo = internalProcess(preparedStatement.getSql(), preparedStatement.getConnectionProxy(), Type.PREPARE);
         List<ParamInfo> paramInfoList = processedInfo.getParamInfoList();
         if (CollectionUtils.isNotEmpty(paramInfoList)) {
             for (ParamInfo paramInfo : paramInfoList) {
@@ -54,17 +61,32 @@ public class CustomStatementHandler {
         return preparedStatement;
     }
 
+    /**
+     * 处理SQL
+     *
+     * @param statement
+     * @param sql
+     * @return
+     * @throws SQLException
+     */
     public String processSql(StatementProxy statement, String sql) throws SQLException {
-        return internalProcess(sql, statement.getConnectionProxy(), Type.SQL).getSql();
+        return internalProcess(sql, statement.getConnectionProxy(), Type.REBUILD).getSql();
     }
 
+    /**
+     * 处理SQL
+     *
+     * @param connectionProxy
+     * @param sql
+     * @return
+     */
     public String processSql(ConnectionProxy connectionProxy, String sql) {
-        return internalProcess(sql, connectionProxy, Type.SQL).getSql();
+        return internalProcess(sql, connectionProxy, Type.REBUILD).getSql();
     }
 
 
     /**
-     * 解析sql语句
+     * 解析处理SQL
      *
      * @param sql
      * @return
@@ -75,10 +97,10 @@ public class CustomStatementHandler {
             Statement statement = sqlParserManager.parse(new StringReader(sql));
             Set<Table> tableSet = TablesFinder.create().getTables(statement);
             List<ParamInfo> paramInfoList = Lists.newArrayList();
-            if (type == Type.INFO) {
-                statement.accept(new CustomStatementVisitor(tableSet, paramInfoList, connection));
-            } else if (type == Type.SQL) {
-                statement.accept(new SelectStatementVisitor(tableSet, paramInfoList, connection));
+            if (type == Type.PREPARE) {
+                statement.accept(new PrepareStatementVisitor(tableSet, paramInfoList, connection));
+            } else if (type == Type.REBUILD) {
+                statement.accept(new RebuildStatementVisitor(tableSet, connection));
             }
             return new ProcessedInfo(statement.toString(), paramInfoList);
         } catch (JSQLParserException e) {
@@ -87,9 +109,18 @@ public class CustomStatementHandler {
         return new ProcessedInfo(sql, Lists.newArrayList());
     }
 
+    /**
+     * 语句处理类型
+     */
     private enum Type {
-        SQL,
-        INFO
+        /**
+         * 重新构造sql
+         */
+        REBUILD,
+        /**
+         * 处理预编译参数
+         */
+        PREPARE
     }
 
 }

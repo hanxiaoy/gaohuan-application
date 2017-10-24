@@ -1,7 +1,6 @@
 package com.gaohuan.sql.common;
 
 import com.alibaba.druid.proxy.jdbc.ConnectionProxy;
-import com.gaohuan.vo.ParamInfo;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.StatementVisitorAdapter;
 import net.sf.jsqlparser.statement.select.PlainSelect;
@@ -14,19 +13,23 @@ import java.util.List;
 import java.util.Set;
 
 /**
+ * 重新构建sql语句类
+ * <p>
  * Created by gaohuan on 2017/10/23.
  */
-public class SelectStatementVisitor extends StatementVisitorAdapter {
-
+public class RebuildStatementVisitor extends StatementVisitorAdapter {
+    /**
+     * 表信息集合
+     */
     private Set<Table> tableSet;
 
-    private List<ParamInfo> paramInfoList;
-
+    /**
+     * 连接对象
+     */
     private ConnectionProxy connection;
 
-    public SelectStatementVisitor(Set<Table> tablesSet, List<ParamInfo> paramInfoList, ConnectionProxy connection) {
+    public RebuildStatementVisitor(Set<Table> tablesSet, ConnectionProxy connection) {
         this.tableSet = tablesSet;
-        this.paramInfoList = paramInfoList;
         this.connection = connection;
     }
 
