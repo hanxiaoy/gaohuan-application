@@ -41,6 +41,13 @@ public class Commons {
         return defaultName;
     }
 
+    /**
+     * 根据表名或别名查找对应表信息
+     *
+     * @param tableSet
+     * @param tableOrAlias
+     * @return
+     */
     public static Table table(Set<Table> tableSet, String tableOrAlias) {
         Table defaultTable = tableSet.iterator().next();
         if (StringUtils.isEmpty(tableOrAlias)) {
@@ -57,7 +64,13 @@ public class Commons {
         return defaultTable;
     }
 
-
+    /**
+     * 根据表名查询字段信息
+     *
+     * @param connection
+     * @param tableName
+     * @return
+     */
     public static List<String> columns(ConnectionProxy connection, String tableName) {
         List<String> resultList = Lists.newArrayList();
         try {

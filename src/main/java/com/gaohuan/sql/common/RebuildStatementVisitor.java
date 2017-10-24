@@ -36,6 +36,11 @@ public class RebuildStatementVisitor extends StatementVisitorAdapter {
         this.connection = connection;
     }
 
+    /**
+     * 重新构造sql语句
+     *
+     * @param select
+     */
     @Override
     public void visit(Select select) {
         select.getSelectBody().accept(new SelectVisitorAdapter() {

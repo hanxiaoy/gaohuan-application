@@ -40,6 +40,11 @@ public class CustomSelectItemVisitor extends SelectItemVisitorAdapter {
 
     }
 
+    /**
+     * 解析*符号,替换为对应表字段,及处理解密
+     *
+     * @param columns
+     */
     @Override
     public void visit(AllColumns columns) {
         boolean mark = false;
@@ -74,6 +79,11 @@ public class CustomSelectItemVisitor extends SelectItemVisitorAdapter {
         }
     }
 
+    /**
+     * 解析select项,处理解密
+     *
+     * @param item
+     */
     @Override
     public void visit(SelectExpressionItem item) {
         boolean mark = false;
