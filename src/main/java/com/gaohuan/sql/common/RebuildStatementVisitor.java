@@ -1,6 +1,13 @@
 package com.gaohuan.sql.common;
 
 import com.alibaba.druid.proxy.jdbc.ConnectionProxy;
+import com.gaohuan.utils.Constants;
+import com.gaohuan.utils.MysqlAesUtils;
+import com.google.common.collect.Lists;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.StringValue;
+import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
+import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
 import net.sf.jsqlparser.statement.StatementVisitorAdapter;
 import net.sf.jsqlparser.statement.delete.Delete;
@@ -10,6 +17,7 @@ import net.sf.jsqlparser.statement.select.Select;
 import net.sf.jsqlparser.statement.select.SelectItem;
 import net.sf.jsqlparser.statement.select.SelectVisitorAdapter;
 import net.sf.jsqlparser.statement.update.Update;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +95,32 @@ public class RebuildStatementVisitor extends StatementVisitorAdapter {
     @Override
     public void visit(Insert insert) {
         //todo 处理插入操作
+        String tableName = insert.getTable().getName();
+        List<Expression> iterable = ((ExpressionList)insert.getItemsList()).getExpressions();  // 值   ?
+        List<Column> columns = insert.getColumns();  // 字段
+        List<String> columnsStr = null ;
+        if(columns == null || CollectionUtils.isEmpty(columns)){
+            columnsStr = Commons.columns(connection, tableName) ;
+        } else {
+            columnsStr = Lists.newArrayList();
+            for(Column column : columns){
+                columnsStr.add(column.getColumnName());
+            }
+        }
+        for (int i =0;i<columnsStr.size(); i++) {
+            String column = columnsStr.get(i) ;
+            List<String> columnList = Constants.TABLE_TO_COLUMN.get(tableName.toUpperCase());  // 加密字段
+
+            if(columnList.contains(column)){
+                Expression expression = iterable.get(i);
+                if(expression instanceof StringValue){
+                    StringValue str = (StringValue) expression;
+                    str.setValue(MysqlAesUtils.encrypt(str.getValue(), Constants.MYSQL_SECRET_KEY));
+
+                }
+            }
+
+        }
     }
 
 }

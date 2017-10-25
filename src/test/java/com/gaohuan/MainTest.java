@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -57,5 +59,29 @@ public class MainTest {
     public void testUpdate1() {
         String sql = "update test_2 set phone=?, user_name = '123' where id =2";
         jdbcService.doUpdate(sql, Collections.singletonList("15811056271"));
+    }
+    @Test
+    public void testInsert1() {
+        jdbcService.doUpdate(" INSERT INTO test_1 VALUES (?,?, ?, ?, ?)  " ,
+                Arrays.asList(new Random().nextInt(10000),"13800138000","backNo2","1123","test1"));
+    }
+
+    @Test
+    public void testInsert2() {
+        jdbcService.doUpdate(" INSERT INTO test_1(id, phone,bank_no, idNo ) VALUES (?,'13800138000', ?, ? )  " ,
+                Arrays.asList(new Random().nextInt(10000),"backNo2","1123" ));
+
+    }
+
+    @Test
+    public void testInsert3() {
+        jdbcService.doUpdate(" INSERT INTO test_1 VALUES (?,'13800138000', ?, ?, ?)  " ,
+                Arrays.asList(new Random().nextInt(10000), "backNo2","1123","test1"));
+    }
+
+    @Test
+    public void testInsert4() {
+        jdbcService.doUpdate(" INSERT INTO test_1(id, phone,bank_no, idNo ) VALUES   (?,?, ?, ? )  " ,
+                Arrays.asList(new Random().nextInt(10000),"13800138000","backNo2","1123"  ));
     }
 }
