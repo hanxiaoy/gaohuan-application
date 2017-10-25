@@ -14,7 +14,7 @@
         </filter>
     </appender>
 
-    <!-- 根logger的设置-->
+    <!-- 根logger的设置 -->
     <root>
         <level value="DEBUG"/>
         <appender-ref ref="console"/>
