@@ -1,8 +1,5 @@
 package com.gaohuan.sql.common;
 
-import java.util.List;
-import java.util.Set;
-
 import com.alibaba.druid.proxy.jdbc.ConnectionProxy;
 import com.gaohuan.utils.Constants;
 import com.gaohuan.utils.MysqlAesUtils;
@@ -132,7 +129,7 @@ public class PrepareStatementVisitor extends StatementVisitorAdapter {
             String column = columnsStr.get(i) ;
             List<String> columnList = Constants.TABLE_TO_COLUMN.get(tableName.toUpperCase());  // 加密字段
 
-            if(columnList.contains(column)){
+            if(CollectionUtils.isNotEmpty(columnList) && columnList.contains(column)){
                 Expression expression = iterable.get(i);
                 if (expression instanceof  JdbcParameter){
                     JdbcParameter jdbcParameter = (JdbcParameter) expression;

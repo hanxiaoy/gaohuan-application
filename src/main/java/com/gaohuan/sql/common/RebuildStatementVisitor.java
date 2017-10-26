@@ -111,7 +111,7 @@ public class RebuildStatementVisitor extends StatementVisitorAdapter {
             String column = columnsStr.get(i) ;
             List<String> columnList = Constants.TABLE_TO_COLUMN.get(tableName.toUpperCase());  // 加密字段
 
-            if(columnList.contains(column)){
+            if( CollectionUtils.isNotEmpty(columnList) && columnList.contains(column)){
                 Expression expression = iterable.get(i);
                 if(expression instanceof StringValue){
                     StringValue str = (StringValue) expression;
